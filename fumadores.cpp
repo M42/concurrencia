@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <semaphore.h>
 #include <pthread.h>
+#include <string>
+#include <iostream>
+using namespace std;
 
 void fumar();
 void* consumir(void*);
@@ -27,19 +30,29 @@ int main() {
     sem_init(&papel, 0, 0);
     sem_init(&cerll, 0, 0);
     sem_init(&tabac, 0, 0);
-
+    
     // Inicializa hebras
     pthread_create(&estanquero, NULL, repartir, NULL);
-    pthread_create(&fumador_sinpapel, NULL, consumir, 0);
-    pthread_create(&fumador_sincerll, NULL, consumir, 1);
-    pthread_create(&fumador_sintabac, NULL, consumir, 2);
+    pthread_create(&fumador_sinpapel, NULL, consumir, (void*) 0);
+    pthread_create(&fumador_sincerll, NULL, consumir, (void*) 1);
+    pthread_create(&fumador_sintabac, NULL, consumir, (void*) 2);
+
+    pthread_exit(NULL);
 }
 
 void* repartir(void*) {
     while (true) {
         int ingrediente = rand() % 3;
+        string nombre_ing;
+
+        switch (ingrediente) {
+        case 0: nombre_ing = "papel"; break;
+        case 1: nombre_ing = "cerillas"; break;
+        case 2: nombre_ing = "tabaco"; break;
+        }
 
         sem_wait(&mostrador);
+        cerr << "Estanquero: reparto " << nombre_ing << endl;
 
         switch (ingrediente) {
         case 0: sem_post(&papel); break;
@@ -51,22 +64,25 @@ void* repartir(void*) {
 
 void* consumir(void* objeto) {
     sem_t* ingrediente;
+    string nombre;
 
     switch (int(objeto)) {
-    case 0: ingrediente = &papel; break;
-    case 1: ingrediente = &cerll; break;
-    case 2: ingrediente = &tabac; break;
+    case 0: ingrediente = &papel; nombre = "Sinpapel";    break;
+    case 1: ingrediente = &cerll; nombre = "Sincerillas"; break;
+    case 2: ingrediente = &tabac; nombre = "Sintabaco";   break;
     }
 
     while (true) {
         sem_wait(ingrediente);
         sem_post(&mostrador);
+
+        cerr << nombre << ": empiezo a fumar" << endl;
         fumar();
     }
 }
 
 void fumar() {
     // Fuma un número aleatorio de milisegundos
-    const unsigned miliseg = 100U + (rand() % 1900U) ;
+    const unsigned miliseg = 100U + (rand() % 1900U);
     usleep( 1000U*miliseg );
 }
