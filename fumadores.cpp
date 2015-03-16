@@ -54,9 +54,11 @@ void* consumir(void* objeto) {
     case 2: ingrediente = tabac; break;
     }
 
-    sem_wait(ingrediente);
-    sem_post(&mostrador);
-    fumar();
+    while (true) {
+        sem_wait(ingrediente);
+        sem_post(&mostrador);
+        fumar();
+    }
 }
 
 void fumar() {
