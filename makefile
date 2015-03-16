@@ -1,2 +1,2 @@
-main: main.cpp
-	g++ $< -o $@ -lpthread -fpermissive
+CPPFLAGS=-fpermissive
+LDLIBS=-lpthread -lrt
