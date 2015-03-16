@@ -14,6 +14,7 @@ sem_t mostrador;
 sem_t papel;
 sem_t cerll;
 sem_t tabac;
+sem_t write_mutex;
 
 int main() {
     // Random seed
@@ -30,6 +31,7 @@ int main() {
     sem_init(&papel, 0, 0);
     sem_init(&cerll, 0, 0);
     sem_init(&tabac, 0, 0);
+    sem_init(&write_mutex, 0, 1);
     
     // Inicializa hebras
     pthread_create(&estanquero, NULL, repartir, NULL);
@@ -52,7 +54,9 @@ void* repartir(void*) {
         }
 
         sem_wait(&mostrador);
+        sem_wait(&write_mutex);
         cerr << "Estanquero: reparto " << nombre_ing << endl;
+        sem_post(&write_mutex);
 
         switch (ingrediente) {
         case 0: sem_post(&papel); break;
@@ -76,7 +80,9 @@ void* consumir(void* objeto) {
         sem_wait(ingrediente);
         sem_post(&mostrador);
 
+        sem_wait(&write_mutex);
         cerr << nombre << ": empiezo a fumar" << endl;
+        sem_post(&write_mutex);
         fumar();
     }
 }
