@@ -29,6 +29,10 @@ int main() {
     sem_init(&tabac, 0, 0);
 
     // Inicializa hebras
+    pthread_create(&estanquero, NULL, repartir, NULL);
+    pthread_create(&fumador_sinpapel, NULL, consumir, 0);
+    pthread_create(&fumador_sincerll, NULL, consumir, 1);
+    pthread_create(&fumador_sintabac, NULL, consumir, 2);
 }
 
 void* repartir(void*) {
@@ -46,12 +50,12 @@ void* repartir(void*) {
 }
 
 void* consumir(void* objeto) {
-    sem_t& ingrediente;
+    sem_t* ingrediente;
 
     switch (int(objeto)) {
-    case 0: ingrediente = papel; break;
-    case 1: ingrediente = cerll; break;
-    case 2: ingrediente = tabac; break;
+    case 0: ingrediente = &papel; break;
+    case 1: ingrediente = &cerll; break;
+    case 2: ingrediente = &tabac; break;
     }
 
     while (true) {
