@@ -4,13 +4,13 @@
 
 using namespace std;
 
-const int num_items = 10;
-const int tam_vect  = 5;
+const int num_items = 20;
+const int tam_vect  = 8;
 int buffer[tam_vect];
 int pos_vect = 0;
-sem_t puede_leer;
-sem_t puede_escr;
-sem_t mutex;
+sem_t puede_leer; // Posiciones ocupadas en el vector
+sem_t puede_escr; // Posiciones restantes en el vector
+sem_t mutex;      // Exclusión mutua
 
 
 int producir_dato();
@@ -56,6 +56,7 @@ void* productor(void*) {
         sem_post(&mutex);
         sem_post(&puede_leer);
     }
+
     return NULL;
 }
 
@@ -75,6 +76,5 @@ void* consumidor(void*) {
         sem_post(&puede_escr);
 
         consumir_dato(dato);
-
     }
 }
