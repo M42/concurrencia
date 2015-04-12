@@ -7,7 +7,7 @@ using namespace std;
 const int num_items = 20;
 const int tam_vect  = 8;
 int buffer[tam_vect];
-int pos_vect = 0;
+int primera_libre = 0;
 sem_t puede_leer; // Posiciones ocupadas en el vector
 sem_t puede_escr; // Posiciones restantes en el vector
 sem_t mutex;      // Exclusión mutua
@@ -29,6 +29,8 @@ int main() {
     pthread_create(&hebra_cons, NULL, consumidor, NULL);
     pthread_create(&hebra_prod, NULL, productor, NULL);
     pthread_exit(NULL);
+
+    cout << "fin" << endl;
 }
 
 
@@ -49,9 +51,9 @@ void* productor(void*) {
         sem_wait(&puede_escr);
         sem_wait(&mutex);
 
-        buffer[pos_vect] = dato;
-        cerr << "Escrito: " << dato << "  En pos: " << pos_vect << endl;
-        pos_vect++;
+        buffer[primera_libre] = dato;
+        cerr << "Escrito: " << dato << "  En pos: " << primera_libre << endl;
+        primera_libre++;
 
         sem_post(&mutex);
         sem_post(&puede_leer);
@@ -68,9 +70,9 @@ void* consumidor(void*) {
         sem_wait(&puede_leer);
         sem_wait(&mutex);
 
-        pos_vect--;
-        dato = buffer[pos_vect];
-        cerr << "Leido: " << dato << "  En pos: " << pos_vect << endl;
+        primera_libre--;
+        dato = buffer[primera_libre];
+        cerr << "Leido: " << dato << "  En pos: " << primera_libre << endl;
 
         sem_post(&mutex);
         sem_post(&puede_escr);
