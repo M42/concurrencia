@@ -1,5 +1,5 @@
 class Productor implements Runnable {
-    private Buffer bb ;
+    private Buffer bb;
     int veces;
     int numP;
     Thread thr;
