@@ -1,7 +1,9 @@
 class Estanquero implements Runnable {
     public Thread thr;
+    Estanco estanco;
 
-    public Estanquero() {
+    public Estanquero(Estanco estanco) {
+        this.estanco = estanco;
         thr = new Thread(this, "estanquero");
     }
     
