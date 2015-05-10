@@ -13,7 +13,7 @@ public class Buffer extends AbstractMonitor {
         buffer = new double[numSlots];
     }
 
-    public void depositar( double valor ) throws InterruptedException { 
+    public void depositar(double valor) throws InterruptedException { 
         enter();
 
         while (cont == numSlots)

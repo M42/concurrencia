@@ -2,7 +2,9 @@ class Fumador implements Runnable {
     int miIngrediente;
     public Thread thr;
 
-    public Fumador(int p_miIngrediente, ...) {
+    public Fumador(int p_miIngrediente) {
+        miIngrediente = p_miIngrediente;
+        thr = new Thread(this, "fumador "+miIngrediente);
     }
 
     public void run() {
